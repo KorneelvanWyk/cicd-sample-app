@@ -3,7 +3,7 @@ properties([
         choice(name: 'TARGET', choices: ['staging', 'production'],
                description: 'Welk deel van de pipeline draaien?')
     ]),
-    pipelineTriggers([pollSCM('H/5 * * * *')])
+    pipelineTriggers([githubPush()])
 ])
 
 def target = params.TARGET ?: 'staging'
