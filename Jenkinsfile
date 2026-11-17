@@ -26,7 +26,7 @@ node {
             sh '''
                 sleep 3
                 APP_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' samplerunning)
-                JENKINS_IP=$(ip -4 route get $APP_IP | grep -oP 'src \K\S+')
+                JENKINS_IP=$(ip route show | awk '/default/ {print $3}')
                 OUT=$(curl -s http://$APP_IP:5050/)
                 echo "$OUT"
                 echo "$OUT" | grep "You are calling me from $JENKINS_IP"
