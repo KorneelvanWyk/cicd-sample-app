@@ -1,15 +1,15 @@
 properties([
     parameters([
-        choice(name: 'TARGET', choices: ['staging', 'production'],
-               description: 'Welk deel van de pipeline draaien?')
+        choice(name: 'TARGET', choices: ['both', 'staging', 'production'],
+       description: 'Welk deel van de pipeline draaien?')
     ]),
     pipelineTriggers([githubPush()])
 ])
 
-def target = params.TARGET ?: 'staging'
+def target = params.TARGET ?: 'both'
 
 node {
-    if (target == 'staging') {
+    if (target in ['staging', 'both']) {
         stage('Checkout') {
             checkout scm
         }
@@ -32,7 +32,9 @@ node {
                 echo "$OUT" | grep "You are calling me from $JENKINS_IP"
             '''
         }
-    } else {
+    }
+     
+    if (target in ['production', 'both']) {
         stage('Production: deploy') {
             withCredentials([usernamePassword(credentialsId: 'dmz010-ssh',
                                               usernameVariable: 'SSH_USER',
